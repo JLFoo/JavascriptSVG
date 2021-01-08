@@ -1,0 +1,171 @@
+<html>
+<title> Test
+</title>
+
+<body>
+<h3>My journey learning SVG & Javascript </h3>
+<p>
+Inline SVG with Javascript animation.
+</p>
+<p id="content"> 
+...
+</p>
+
+<svg width="500" height="500" onload="drag(evt)">
+	<defs>
+		<filter id="filter1" x=0 y=0 width="300%" height="300%">
+			  <feOffset result="offsetImage" in="SourceAlpha" dx="15" dy="15" />
+			  
+			  <feBlend in="SourceGraphic" in2="blurImage" mode="lighten" />
+		</filter>
+	</defs>
+	<rect width=500 height=500 fill="green" />
+	<circle cx=100 cy=100 r=50 fill="blue" stroke="red" stroke-width="0" id="ball" filter="url(#filter1)" draggable="true" />
+</svg>
+<script>
+    const svgball = document.getElementById('ball');
+	var ballheight = parseFloat(svgball.getAttributeNS(null, 'cy'));
+	var balldir = 0; //ball direction; 0 - down, 1 - up
+	var a = 1; //acceleration
+	var rebounce = ballheight;
+	var x, y, offset_x, offset_y;
+	var element_dragged = null;
+	var ctm = 0;
+	var roll_dir = 1;
+	
+	svgball.setAttributeNS(null, 'cx', Math.floor(Math.random()*400+50));
+	
+	function ball_bounce(timestamp){
+		ballheight = parseFloat(svgball.getAttributeNS(null, 'cy'));
+		if(ballheight>=450){
+			balldir = 1; //change ball direction to up
+			
+		}
+		if(balldir == 1 && a<1){
+			balldir = 0; //change ball direction to down
+			a=1;
+			rebounce = 450 - ballheight;
+		}
+			
+		if(balldir){ //moving up
+			ballheight -=(5*a);
+			a-=0.5;
+		}
+		else{ //moving down
+			ballheight +=(5*a);
+			a+=0.3;
+		}
+			
+		svgball.setAttributeNS(null, 'cy', ballheight);
+		
+		x = parseFloat(svgball.getAttributeNS(null, 'cx'));
+		x += roll_dir * 1;
+		if(x <=50 || x >=450)
+			roll_dir *= -1;
+		svgball.setAttributeNS(null, 'cx', x);
+		
+		if(rebounce >= 10) 
+			window.requestAnimationFrame(ball_bounce);
+		else{	
+			document.getElementById("content").innerHTML = "Drag and drop the ball to see it bounces.";
+			a=1;
+			window.requestAnimationFrame(ball_roll);
+		}
+	}
+	
+	function ball_roll(timestamp){		
+		x = parseFloat(svgball.getAttributeNS(null, 'cx'));
+		x = x + roll_dir * 0.8 * a;
+		if(x <=50 || x >=450)
+			roll_dir *= -1;
+		a -=0.01;
+		 
+		svgball.setAttributeNS(null, 'cx', x);
+		
+		if(a>0)
+			window.requestAnimationFrame(ball_roll);
+		else	
+			a=1;
+	}
+	
+	function start_drag(event){
+		if(event.target.id == "ball"){
+			element_dragged = event.target;
+			
+			//calculate offset of mouse position to SVG position
+			ctm = event.target.getScreenCTM();
+			x = (event.clientX - ctm.e)/ctm.a;
+			y = (event.clientY - ctm.f)/ctm.d;
+			offset_x = x - parseFloat(svgball.getAttributeNS(null, 'cx'));
+			offset_y = y - parseFloat(svgball.getAttributeNS(null, 'cy'));
+		}
+	}
+	
+	function ball_drag(event){
+		if(element_dragged){
+			ctm = event.target.getScreenCTM();
+			x = (event.clientX - ctm.e)/ctm.a;
+			y = (event.clientY - ctm.f)/ctm.d;
+			document.getElementById("mouse").innerHTML = "x = " + Math.floor(x) + " y = "+ Math.floor(y);
+			svgball.setAttributeNS(null, 'cx', x - offset_x);
+			svgball.setAttributeNS(null, 'cy', y - offset_y);
+			if((x - offset_x)<=50 || (x - offset_x)>=450 || (y - offset_y)<=50 || (y - offset_y)>=450){
+				if(x<=50)
+					svgball.setAttributeNS(null, 'cx', 50);
+				else if(x>=450)	
+					svgball.setAttributeNS(null, 'cx', 450);
+					
+				if(y<=50)
+					svgball.setAttributeNS(null, 'cy', 50);
+				else if(y>=450)	
+					svgball.setAttributeNS(null, 'cy', 450);
+				end_drag(event);
+			}
+		}
+	}
+	
+	function end_drag(event){
+		if(element_dragged){
+			rebounce = parseFloat(element_dragged.getAttributeNS(null, 'cy'));
+			roll_dir = Math.floor(Math.random()*2);
+			if(roll_dir == 0)
+				roll_dir = -1;
+				
+			window.requestAnimationFrame(ball_bounce);
+			element_dragged = null;
+		}
+	}
+	
+	function drag(evt){
+		evt.target.addEventListener('mousedown', start_drag);
+		evt.target.addEventListener('mousemove', ball_drag);
+		evt.target.addEventListener('mouseup', end_drag);
+		evt.target.addEventListener('mouseleave', end_drag);
+	}
+	
+	window.requestAnimationFrame(ball_bounce);
+    
+	
+	
+	
+</script>
+
+<div id="mouse" style="position:absolute; top:585px; left:390px; color:white;"></div>
+<p>
+References:
+<list>
+<li><a href="https://www.w3schools.com/graphics/svg_intro.asp">SVG Tutorial</a></li>
+<li><a href="https://docs.w3cub.com/svg/">SVG Documentation</a></li>
+<li><a href="https://chanind.github.io/javascript/svg/2019/01/13/manipulating-and-animating-svg-with-raw-javascript.html">Animation example: chanind.github.io</a></li>
+<li><a href="http://www.javascriptkit.com/javatutors/requestanimationframe.shtml">requestAnimationFrame()</a></li>
+<li><a href="https://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/">Draggable SVG elements</a></li>
+
+</list>
+
+</p>	
+
+<p style="text-align:right"><a href="ExternalSVG.html">Next Page >></a></p>
+</body>
+
+
+</html>
