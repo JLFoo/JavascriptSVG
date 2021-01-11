@@ -21,7 +21,7 @@ Inline SVG with Javascript.
 		</filter>
 	</defs>
 	<rect width=500 height=500 fill="green" />
-	<circle cx=100 cy=100 r=50 fill="blue" stroke="red" stroke-width="0" id="ball" filter="url(#filter1)" draggable="true" />
+	<circle cx=100 cy=100 r=50 fill="blue" stroke="blue" stroke-width="2" id="ball" filter="url(#filter1)" draggable="true" />
 </svg>
 <script>
     const svgball = document.getElementById('ball');
@@ -90,7 +90,8 @@ Inline SVG with Javascript.
 	}
 	
 	function start_drag(event){
-		if(event.target.id == "ball"){
+		if(event.target.id == "ball" || event.targetTouches[0].id == "ball"){
+			svgball.setAttributeNS(null, 'fill', "red");
 			element_dragged = event.target;			
 			//calculate offset of mouse position to SVG position
 			ctm = event.target.getScreenCTM();
@@ -114,6 +115,8 @@ Inline SVG with Javascript.
 	
 	function end_drag(event){
 		if(element_dragged){
+			svgball.setAttributeNS(null, 'fill', "blue");
+			svgball.setAttributeNS(null, 'stroke', "blue");
 			rebounce = parseFloat(element_dragged.getAttributeNS(null, 'cy'));
 			roll_dir = Math.floor(Math.random()*2);
 			if(roll_dir == 0)
@@ -125,11 +128,17 @@ Inline SVG with Javascript.
 	}
 	
 	function touch_drag(event){
-		var touches = event.changedTouches;
-		x = touches[0].pageX;
-		y = touches[0].pageY;
-		document.getElementById("mouse").innerHTML = "x = " + Math.floor(x) + " y = "+ Math.floor(y);
-		ball_move(event, x, y );
+		if(element_dragged){
+			svgball.setAttributeNS(null, 'stroke', "white");
+			var touches = event.changedTouches;
+			ctm = event.target.getScreenCTM();
+			x = (touches[0].pageX - ctm.e)/ctm.a;
+			y = (touches[0].pageY - ctm.f)/ctm.d;
+			document.getElementById("mouse").innerHTML = "x = " + Math.floor(x) + " y = "+ Math.floor(y);
+			
+			if(y<450)
+				ball_move(event, x, y );
+		}
 	}
 	
 	function ball_move(event, bx, by){
