@@ -1,11 +1,12 @@
 <html>
-<title> Test
+<title>Bouncy Ball
 </title>
 
 <body>
-<h3>My journey learning SVG & Javascript </h3>
+<h1>Bouncy Ball </h1>
+<h3>SVG Animation</h3>
 <p>
-Inline SVG with Javascript animation.
+Inline SVG with Javascript.
 </p>
 <p id="content"> 
 ...
@@ -90,8 +91,7 @@ Inline SVG with Javascript animation.
 	
 	function start_drag(event){
 		if(event.target.id == "ball"){
-			element_dragged = event.target;
-			
+			element_dragged = event.target;			
 			//calculate offset of mouse position to SVG position
 			ctm = event.target.getScreenCTM();
 			x = (event.clientX - ctm.e)/ctm.a;
@@ -107,20 +107,8 @@ Inline SVG with Javascript animation.
 			x = (event.clientX - ctm.e)/ctm.a;
 			y = (event.clientY - ctm.f)/ctm.d;
 			document.getElementById("mouse").innerHTML = "x = " + Math.floor(x) + " y = "+ Math.floor(y);
-			svgball.setAttributeNS(null, 'cx', x - offset_x);
-			svgball.setAttributeNS(null, 'cy', y - offset_y);
-			if((x - offset_x)<=50 || (x - offset_x)>=450 || (y - offset_y)<=50 || (y - offset_y)>=450){
-				if(x<=50)
-					svgball.setAttributeNS(null, 'cx', 50);
-				else if(x>=450)	
-					svgball.setAttributeNS(null, 'cx', 450);
-					
-				if(y<=50)
-					svgball.setAttributeNS(null, 'cy', 50);
-				else if(y>=450)	
-					svgball.setAttributeNS(null, 'cy', 450);
-				end_drag(event);
-			}
+			ball_move(event, x - offset_x, y - offset_y);
+			
 		}
 	}
 	
@@ -136,11 +124,46 @@ Inline SVG with Javascript animation.
 		}
 	}
 	
+	function touch_drag(event){
+		var touches = event.changedTouches;
+		x = touches[0].pageX;
+		y = touches[0].pageY;
+		document.getElementById("mouse").innerHTML = "x = " + Math.floor(x) + " y = "+ Math.floor(y);
+		ball_move(event, x, y );
+	}
+	
+	function ball_move(event, bx, by){
+		svgball.setAttributeNS(null, 'cx', bx);
+		svgball.setAttributeNS(null, 'cy', by);
+		if(bx <=50 || bx >=450 || by <=50 || by >=450){
+			if(x<=50)
+				svgball.setAttributeNS(null, 'cx', 50);
+			else if(x>=450)	
+				svgball.setAttributeNS(null, 'cx', 450);
+				
+			if(y<=50)
+				svgball.setAttributeNS(null, 'cy', 50);
+			else if(y>=450)	
+				svgball.setAttributeNS(null, 'cy', 450);
+			end_drag(event);
+		}
+	}
 	function drag(evt){
+		
+		//mouse events
 		evt.target.addEventListener('mousedown', start_drag);
 		evt.target.addEventListener('mousemove', ball_drag);
 		evt.target.addEventListener('mouseup', end_drag);
 		evt.target.addEventListener('mouseleave', end_drag);
+		
+		
+		//touch events
+		evt.target.addEventListener('touchstart', start_drag);
+		evt.target.addEventListener('touchmove', touch_drag);
+		evt.target.addEventListener('touchend', end_drag);
+		evt.target.addEventListener('touchcancel', end_drag);
+		
+		
 	}
 	
 	window.requestAnimationFrame(ball_bounce);
@@ -151,6 +174,10 @@ Inline SVG with Javascript animation.
 </script>
 
 <div id="mouse" style="position:absolute; top:585px; left:390px; color:white;"></div>
+
+<P>
+Testing <a href="touch.html">touch</a> event.
+</p>
 <p>
 References:
 <list>

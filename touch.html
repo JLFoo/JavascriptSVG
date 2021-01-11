@@ -1,0 +1,66 @@
+<html>
+<title>Touch
+</title>
+
+<body>
+<h1>Testing Touch events </h1>
+<p>Touch the blue screen below. (For touch devices only) </p>
+<svg width="500" height="500" onload="touch(evt)">
+	<rect id="box" width=500 height=500 fill="blue" />
+
+</svg>
+<p id="start">Touch Start = none</p>
+<p id="move">Touch Move = none</p>
+<p id="end">Touch End = none</p>
+<p id="cancel">Touch Cancel = none</p>
+
+<script>
+	const bluebox = document.getElementById('box');
+	
+	function touch(evt){
+		evt.target.addEventListener('touchstart', tstart);
+		evt.target.addEventListener('touchmove', tmove);
+		evt.target.addEventListener('touchend', tend);
+		evt.target.addEventListener('touchcancel', tcancel);
+	}
+	
+	function tstart(event){
+		var touches = event.changedTouches;
+		var msg = "Touch Start = Enter <br>"
+		
+		bluebox.setAttributeNS(null, 'fill', "green");
+		
+		msg += "touch length = " + touches.length + "<br>";
+		for(var i=0; i<touches.length; i++){
+			msg += "touch " + i + " id = " + touches[i].identifier + "<br>";
+		}
+		
+		document.getElementById("start").innerHTML = msg;
+	
+	}
+	
+	function tmove(event){
+		var touches = event.changedTouches;
+		var msg = "Touch Move = Enter <br>";
+		bluebox.setAttributeNS(null, 'fill', "red");
+		for(var i=0; i<touches.length; i++){
+			msg += "touch id " + touches[i].identifier + " x= " + touches[i].pageX + " y = "+ touches[i].pageY +"<br>";
+		}
+		document.getElementById("move").innerHTML = msg;
+	}
+	
+	function tend(event){
+		bluebox.setAttributeNS(null, 'fill', "blue");
+		document.getElementById("end").innerHTML = "Touch End = Enter";
+	
+	}
+	
+	function tcancel(event){
+		document.getElementById("cancel").innerHTML = "Touch Cancel = Enter";
+	
+	}
+</script>
+
+</body>
+
+</html>
