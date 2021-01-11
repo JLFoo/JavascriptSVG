@@ -90,7 +90,7 @@ Inline SVG with Javascript.
 	}
 	
 	function start_drag(event){
-		if(event.target.id == "ball" || event.targetTouches[0].id == "ball"){
+		if(event.target.id == "ball"){
 			svgball.setAttributeNS(null, 'fill', "orange");
 			element_dragged = event.target;			
 			//calculate offset of mouse position to SVG position
@@ -127,7 +127,9 @@ Inline SVG with Javascript.
 		}
 	}
 	
+	//handling touch moves	
 	function touch_drag(event){
+		event.preventDefault();//prevent browser from handling default touch movements.
 		if(element_dragged){
 			svgball.setAttributeNS(null, 'stroke-width', 2);
 			var touches = event.changedTouches;
