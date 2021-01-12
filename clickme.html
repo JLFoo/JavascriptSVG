@@ -1,0 +1,159 @@
+<html>
+<title>Click.Me.
+</title>
+
+<body>
+<h1>Click Me If You Can</h1>
+
+<svg width="500" height="500" onload="setEvents(evt)" id="stage">
+	
+
+</svg>
+
+<script>
+	const svg = document.getElementById('stage');
+	var box = [];
+	var scoreBoard, scoreVal;
+	var x, y, randx, randy, starttime;
+	var touched_box = [];
+	var gamespeed = 2000; //2 seconds
+	var score = 0;
+	var hit = 0;
+	
+	//creates grid of 10x10 boxes 
+		
+	for(y=0; y<10; y++){
+		box[y] = [];
+		for(x=0; x<10; x++){
+			box[y][x] = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+			box[y][x].setAttributeNS(null, 'fill', "lightblue");
+			box[y][x].setAttributeNS(null, 'stroke', "black");
+			box[y][x].setAttributeNS(null, 'stroke-width', 1);
+			box[y][x].setAttributeNS(null, 'width', 40);
+			box[y][x].setAttributeNS(null, 'height', 40);
+			box[y][x].setAttributeNS(null, 'x', x*40);
+			box[y][x].setAttributeNS(null, 'y', y*40);
+			svg.appendChild(box[y][x]);
+		}
+	}
+	scoreBoard = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+	scoreBoard.setAttributeNS(null, 'x', 430);
+	scoreBoard.setAttributeNS(null, 'y', 20);
+	scoreBoard.setAttributeNS(null, 'font-weight', "bold");
+	scoreBoard.setAttributeNS(null, 'font-family', "Arial");
+	var scoreBoardTxt = document.createTextNode("Score");
+	scoreBoard.appendChild(scoreBoardTxt);
+	svg.appendChild(scoreBoard);
+	
+	scoreVal = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+	scoreVal.setAttributeNS(null, 'x', 430);
+	scoreVal.setAttributeNS(null, 'y', 50);
+	scoreVal.setAttributeNS(null, 'font-weight', "bold");
+	scoreVal.setAttributeNS(null, 'font-family', "Arial");
+	scoreVal.setAttributeNS(null, 'font-size', 30);
+	var scoreValTxt = document.createTextNode("0");
+	scoreVal.appendChild(scoreValTxt);
+	svg.appendChild(scoreVal);
+	
+	starttime = 0;
+	window.requestAnimationFrame(start_game);
+	
+	function start_game(timestamp){
+		if(starttime==0){
+			starttime = timestamp;
+			randx = Math.floor(Math.random()*10);
+			randy = Math.floor(Math.random()*10);
+			
+			box[randy][randx].setAttributeNS(null, 'fill', "yellow");
+			box[randy][randx].setAttributeNS(null, 'id', "target");
+		}
+		
+		if((timestamp - starttime) >= gamespeed || hit){
+			box[randy][randx].setAttributeNS(null, 'fill', "lightblue");
+			box[randy][randx].setAttributeNS(null, 'id', "");
+			starttime=0;
+			hit = 0;
+		}
+		
+			
+		window.requestAnimationFrame(start_game);
+	}
+	
+	function start_click(evt){
+		var box;
+		
+		box	= evt.target;
+		if(box.tagName == "rect"){
+			box.setAttributeNS(null, 'fill', "lime");
+			touched_box.push(box);
+		}
+		
+	}
+	
+	function click_move(evt){
+		var box;
+		if(touched_box.length){			
+			resetTouchedBox();
+			box	= evt.target;
+			box.setAttributeNS(null, 'fill', "lime");
+			touched_box.push(box);
+		}
+	}
+	
+	function click_confirm(evt){
+		var box, isTarget;
+		
+		box	= evt.target;
+		if(box.tagName == "rect"){
+			//clear all previously touched boxes
+			if(touched_box.length){
+				resetTouchedBox();
+			}
+			
+			//change color of the final box			
+			isTarget = box.getAttributeNS(null, 'id');
+		
+			if(isTarget == "target"){
+				score++;
+				hit++;
+				box.setAttributeNS(null, 'fill', "red");
+				scoreVal.innerHTML = score;
+				box.setAttributeNS(null, 'id', "");
+				
+				//increase difficulty every 10 points
+				if(score >0 && score%10 == 0)
+					gamespeed /= 1.3;
+			}
+			else
+				box.setAttributeNS(null, 'fill', "lime");
+		}
+	}
+	
+	function resetTouchedBox(){
+		var b;
+		for(let i=0; i<touched_box.length; i++){
+			b = touched_box.pop();
+			b.setAttributeNS(null, 'fill', "lightblue");
+		}		
+		
+	}
+	
+	function setEvents(evt){
+		//mouse events
+		evt.target.addEventListener('mousedown', start_click);
+		evt.target.addEventListener('mousemove', click_move);
+		evt.target.addEventListener('mouseup', click_confirm);
+		evt.target.addEventListener('mouseleave', click_confirm);
+		
+		
+		//touch events
+		evt.target.addEventListener('touchstart', start_click);
+		evt.target.addEventListener('touchmove', click_move);
+		evt.target.addEventListener('touchend', click_confirm);
+		evt.target.addEventListener('touchcancel', click_confirm);
+	}
+</script>
+
+</body>
+
+</html>
