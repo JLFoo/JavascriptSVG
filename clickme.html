@@ -1,9 +1,12 @@
 <html>
 <title>Click.Me.
 </title>
+<head>
+	<link rel="stylesheet" href="JLstyle.css">
+</head>
 
 <body>
-<h1>Click Me If You Can</h1>
+<h1 style="font-family:Arial; font-style:italic">Click Me If You Can</h1>
 
 <svg width="500" height="500" onload="setEvents(evt)" id="stage">
 	
@@ -27,7 +30,7 @@
 		for(x=0; x<10; x++){
 			box[y][x] = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 			box[y][x].setAttributeNS(null, 'fill', "lightblue");
-			box[y][x].setAttributeNS(null, 'stroke', "black");
+			box[y][x].setAttributeNS(null, 'stroke', "white");
 			box[y][x].setAttributeNS(null, 'stroke-width', 1);
 			box[y][x].setAttributeNS(null, 'width', 40);
 			box[y][x].setAttributeNS(null, 'height', 40);

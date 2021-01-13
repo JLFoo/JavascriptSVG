@@ -1,0 +1,19 @@
+a:link, a:visited { 
+  color: mediumvioletred;
+  text-decoration: underline dotted deeppink;
+  cursor: auto;
+}
+
+a:link:active, a:visited:active { 
+  color: mediumvioletred;
+}
+
+body{
+	font-family:Verdana;
+	font-size:16;
+	color: SlateGrey;		
+}
+
+h1, h2, h3, h4{
+	color: Black;
+}
