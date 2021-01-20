@@ -8,7 +8,7 @@
 <body>
 <h1 style="font-family:Arial; font-style:italic">Click Me If You Can</h1>
 
-<svg width="500" height="500" onload="setEvents(evt)" id="stage">
+<svg width="90%" height="100%" onload="setEvents(evt)" id="stage">
 	
 
 </svg>
@@ -22,6 +22,10 @@
 	var gamespeed = 2000; //2 seconds
 	var score = 0;
 	var hit = 0;
+	var square_size;
+	
+	console.log("height = "+ svg.clientHeight + " width = " + svg.clientWidth);
+	square_size = 0.8*Math.min(svg.clientHeight, svg.clientWidth)/10;
 	
 	//creates grid of 10x10 boxes 
 		
@@ -32,16 +36,16 @@
 			box[y][x].setAttributeNS(null, 'fill', "lightblue");
 			box[y][x].setAttributeNS(null, 'stroke', "white");
 			box[y][x].setAttributeNS(null, 'stroke-width', 1);
-			box[y][x].setAttributeNS(null, 'width', 40);
-			box[y][x].setAttributeNS(null, 'height', 40);
-			box[y][x].setAttributeNS(null, 'x', x*40);
-			box[y][x].setAttributeNS(null, 'y', y*40);
+			box[y][x].setAttributeNS(null, 'width', square_size);
+			box[y][x].setAttributeNS(null, 'height', square_size);
+			box[y][x].setAttributeNS(null, 'x', x*square_size);
+			box[y][x].setAttributeNS(null, 'y', y*square_size);
 			svg.appendChild(box[y][x]);
 		}
 	}
 	scoreBoard = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-	scoreBoard.setAttributeNS(null, 'x', 430);
-	scoreBoard.setAttributeNS(null, 'y', 20);
+	scoreBoard.setAttributeNS(null, 'x', square_size*10.3);
+	scoreBoard.setAttributeNS(null, 'y', square_size/2);
 	scoreBoard.setAttributeNS(null, 'font-weight', "bold");
 	scoreBoard.setAttributeNS(null, 'font-family', "Arial");
 	var scoreBoardTxt = document.createTextNode("Score");
@@ -49,8 +53,8 @@
 	svg.appendChild(scoreBoard);
 	
 	scoreVal = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-	scoreVal.setAttributeNS(null, 'x', 430);
-	scoreVal.setAttributeNS(null, 'y', 50);
+	scoreVal.setAttributeNS(null, 'x', square_size*10.3);
+	scoreVal.setAttributeNS(null, 'y', square_size*1.2);
 	scoreVal.setAttributeNS(null, 'font-weight', "bold");
 	scoreVal.setAttributeNS(null, 'font-family', "Arial");
 	scoreVal.setAttributeNS(null, 'font-size', 30);
